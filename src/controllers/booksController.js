@@ -105,8 +105,9 @@ try {
      let data = req.params.bookId
 
   if(!data){return res.status(400).send({ status: false, message: "Please enter bookId in params" })}
-
+console.log(data)
   let deleteBook = await booksModel.findOneAndUpdate({_id:data , isDeleted:false}, {isDeleted:true, deletedAt:Date.now()} , {new:true})
+  console.log(deleteBook)
   if(!deleteBook){ return res.status(404).send({ status: false, message: "book dosen't exist or already deleted" })}
 
   res.status(200).send({ status: true, message: 'Success' })
