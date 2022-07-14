@@ -1,6 +1,6 @@
-const userModel = require('../models/userModel')
+
 const jwt = require('jsonwebtoken')
-const moment = require('moment')
+
 const mongoose = require('mongoose')
 const booksModel = require('../models/booksModel')
 
@@ -20,36 +20,36 @@ const authentication = async function (req, res, next) {
         next();
     }
     catch (err) {
-        return res.status(500).send({status:false,  message: err.message })
+        return res.status(500).send({ status: false, message: err.message })
     }
 }
 
 //------------------------------------------------Authorization for Creating book----------------------------------------------//
 
-const authorisation = async function(req,res,next){
-let data = req.body.userId
-let decodeToken = req.abcd
-let userid = decodeToken.userId
+const authorisation = async function (req, res, next) {
+    let data = req.body.userId
+    let decodeToken = req.abcd
+    let userid = decodeToken.userId
 
-if (!mongoose.isValidObjectId(data)) { return res.status(400).send({ status: false, message: "please enter  valid userId" }) }
-if(userid!=data) return res.status(403).send({ message: "you are not authorised " })
-next()
+    if (!mongoose.isValidObjectId(data)) { return res.status(400).send({ status: false, message: "please enter  valid userId" }) }
+    if (userid != data) return res.status(403).send({ message: "you are not authorised " })
+    next()
 }
 
 //------------------------------------------------Authorization for updateBook and deleteBook----------------------------------------------//
 
-const authorisation2 = async function(req,res,next){
+const authorisation2 = async function (req, res, next) {
     let param = req.params.bookId
     if (!mongoose.isValidObjectId(param)) { return res.status(400).send({ status: false, message: "please enter  valid bookId" }) }
     let decodeToken = req.abcd
     let userId = decodeToken.userId
     let finduser = await booksModel.findById(param)
-    if(!finduser){return res.status(400).send({ message: "No such book available"})}
+    if (!finduser) { return res.status(400).send({ message: "No such book available" }) }
     let userId1 = finduser.userId
 
-if(userId != userId1){  return res.status(403).send({ message: "you are not authorised"})}
+    if (userId != userId1) { return res.status(403).send({ message: "you are not authorised" }) }
 
-next()
+    next()
 }
 
 module.exports.authentication = authentication

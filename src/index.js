@@ -3,9 +3,11 @@ const bodyParser = require('body-parser');
 const route = require('./routes/routes.js');
 const mongoose = require('mongoose');
 const app = express();
+const multer = require('multer')
 
 /*------------------------------------------Bind Application Level Middleware:-------------------------------------------*/
 app.use(bodyParser.json());
+app.use(multer().any())
 app.use(bodyParser.urlencoded({ extended: true }));
 
 /*------------------------------------------Connecting Data-Base:-------------------------------------------*/

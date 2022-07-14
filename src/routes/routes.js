@@ -5,6 +5,7 @@ const userController = require('../controllers/userController')
 const booksController = require('../controllers/booksController')
 const reviewController = require('../controllers/reviewController')
 const middleware = require('../middleware/commonMiddleware')
+const aws1 =require('../controllers/awsController')
 
 /*------------------------------------------API's for userController-------------------------------------------*/
 router.post('/register',userController.createUser)
@@ -23,6 +24,7 @@ router.delete('/books/:bookId',middleware.authentication,  middleware.authorisat
 router.post('/books/:bookId/review', reviewController.createReview)  
 router.put('/books/:bookId/review/:reviewId', reviewController.updateReview)
 router.delete('/books/:bookId/review/:reviewId' , reviewController.deleteReview)
+router.post('/write-file-aws',aws1.awsFile) 
 
 /*------------------------------------------Export Modules:-------------------------------------------*/
 module.exports = router
