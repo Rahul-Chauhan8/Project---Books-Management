@@ -1,5 +1,4 @@
 
-
 const aws= require("aws-sdk")
 
 
@@ -38,8 +37,8 @@ let uploadFile= async ( file) =>{
         if(err) {
             return reject({"error": err})
         }
-        console.log(data)
-        console.log("file uploaded succesfully")
+       // console.log(data)
+       // console.log("file uploaded succesfully")
         return resolve(data.Location)
     })
 
@@ -49,23 +48,28 @@ let uploadFile= async ( file) =>{
 
    })
 }
-    let awsFile = async function(req, res){
+    let awsFile = async function(req, res, next){
 
-    try{
+   try{
         let files= req.files
         if(files && files.length>0){
             //upload to s3 and get the uploaded link
             // res.send the link back to frontend/postman
             let uploadedFileURL= await uploadFile( files[0] )
-            res.status(201).send({msg: "file uploaded succesfully", data: uploadedFileURL})
+            req.xyz = uploadedFileURL
+         //  res.status(201).send({msg: "file uploaded succesfully", data: uploadedFileURL})
         }
         else{
             res.status(400).send({ msg: "No file found" })
-        }
-        
-    }
-    catch(err){
-        res.status(500).send({msg: err})
+    
+     }
+     
+  
+   next()        
+     }
+
+     catch(err){
+         res.status(500).send({msg: err})
     }
     
 }
