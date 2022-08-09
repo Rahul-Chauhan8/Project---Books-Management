@@ -11,7 +11,7 @@ app.use(multer().any())
 
 
 /*------------------------------------------Connecting Data-Base:-------------------------------------------*/
-mongoose.connect("mongodb+srv://RahulChauhan:3aDm5xdCx8MiuHql@cluster0.xzyyibs.mongodb.net/group51Database", {
+mongoose.connect("mongodb+srv://RahulChauhan:3aDm5xdCx8MiuHql@cluster0.xzyyibs.mongodb.net/Project-Books-Management", {
     useNewUrlParser: true
 })
     .then(() => console.log("MongoDb is connected"))
