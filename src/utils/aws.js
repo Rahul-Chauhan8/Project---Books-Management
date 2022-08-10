@@ -20,7 +20,7 @@ aws.config.update({
     region: "ap-south-1"
 })
 
-let uploadFile= async ( file) =>{
+exports.uploadFile= async ( file) =>{
    return new Promise( function(resolve, reject) {
     // this function will upload file to aws and return the link
     let s3= new aws.S3({apiVersion: '2006-03-01'}); // we will be using the s3 service of aws
@@ -48,28 +48,4 @@ let uploadFile= async ( file) =>{
 
    })
 }
-    let awsFile = async function(req, res, next){
-
-   try{
-        let files= req.files
-        if(files && files.length>0){
-            //upload to s3 and get the uploaded link
-            // res.send the link back to frontend/postman
-            let uploadedFileURL= await uploadFile( files[0] )
-            req.xyz = uploadedFileURL
-         //  res.status(201).send({msg: "file uploaded succesfully", data: uploadedFileURL})
-        }
-        else{
-            res.status(400).send({ msg: "No file found" })
     
-     }
-     
-  
-       
-     }
-
-     catch(err){
-         res.status(500).send({msg: err})
-    }
-    
-}
