@@ -2,51 +2,52 @@ const mongoose = require('mongoose')
 const booksModel = require('../models/booksModel')
 const userModel = require('../models/userModel')
 const reviewModel = require('../models/reviewModel')
-const {uploadFile} = require('../utils/aws')
+const { uploadFile } = require('../utils/aws')
 const { isValid, validISBN } = require('../validator/validation')
 
 //------------------------------------------------createBook----------------------------------------------//
 const createBook = async function (req, res) {
 
-  try {
-   
-     let data = req.body
-     let files= req.files
+  // try {
+
+  let data = req.body
+  let files = req.files
 
 
-   
-     let { title, excerpt, ISBN, category, subcategory, userId} = data
-    
-     data.bookCover = uploadedFileURL 
-    
- 
-     if (Object.keys(data).length == 0) { return res.status(400).send({ status: false, message: "please enter the data" }) }
-     if (!isValid(title)) { return res.status(400).send({ status: false, message: "please enter the title" }) }
-     if (!isValid(excerpt)) { return res.status(400).send({ status: false, message: "please enter the excerpt" }) }
-     if (!(validISBN(ISBN))) { return res.status(400).send({ status: false, message: "ISBN is not valid" }) }
-     if (!isValid(ISBN)) { return res.status(400).send({ status: false, message: "please enter the ISBN" }) }
-     if (!isValid(category)) { return res.status(400).send({ status: false, message: "please enter the category" }) }
-     if (!isValid(subcategory)) { return res.status(400).send({ status: false, message: "please enter the subcategory" }) }
-     if (!isValid(userId)) { return res.status(400).send({ status: false, message: "please enter the userId" }) }
- 
-     let checkUserId = await userModel.findOne({ _id: userId })
-     if (!checkUserId) { return res.status(400).send({ status: false, message: "user does not exist" }) }
- 
-     let checkTitle = await booksModel.findOne({ title: title })
-     if (checkTitle) { return res.status(400).send({ status: false, message: "title already exist" }) }
- 
-     let checkISBN = await booksModel.findOne({ ISBN: ISBN })
-     if (checkISBN) { return res.status(400).send({ status: false, message: "ISBN already exist" }) }
- 
-     let uploadedFileURL= await uploadFile( files[0] )
-     data.bookCover = uploadedFileURL
 
-     let saveData = await booksModel.create(data)
+  let { title, excerpt, ISBN, category, subcategory, userId } = data
 
- 
-     return res.status(201).send({ status: true, message: 'Success', data: saveData })
-   } catch (error) { res.status(500).send({ status: false, message: error.message }) }
- }
+
+
+  if (Object.keys(data).length == 0) { return res.status(400).send({ status: false, message: "please enter the data" }) }
+  if (!isValid(title)) { return res.status(400).send({ status: false, message: "please enter the title" }) }
+  if (!isValid(excerpt)) { return res.status(400).send({ status: false, message: "please enter the excerpt" }) }
+  if (!(validISBN(ISBN))) { return res.status(400).send({ status: false, message: "ISBN is not valid" }) }
+  if (!isValid(ISBN)) { return res.status(400).send({ status: false, message: "please enter the ISBN" }) }
+  if (!isValid(category)) { return res.status(400).send({ status: false, message: "please enter the category" }) }
+  if (!isValid(subcategory)) { return res.status(400).send({ status: false, message: "please enter the subcategory" }) }
+  if (!isValid(userId)) { return res.status(400).send({ status: false, message: "please enter the userId" }) }
+
+  let checkUserId = await userModel.findOne({ _id: userId })
+  if (!checkUserId) { return res.status(400).send({ status: false, message: "user does not exist" }) }
+
+  let checkTitle = await booksModel.findOne({ title: title })
+  if (checkTitle) { return res.status(400).send({ status: false, message: "title already exist" }) }
+
+  let checkISBN = await booksModel.findOne({ ISBN: ISBN })
+  if (checkISBN) { return res.status(400).send({ status: false, message: "ISBN already exist" }) }
+  if (files) {
+    let uploadedFileURL = await uploadFile(files[0])
+    data.bookCover = uploadedFileURL
+  }
+  let saveData = await booksModel.create(data)
+
+
+  return res.status(201).send({ status: true, message: 'Success', data: saveData })
+
+  //  } catch (error) { res.status(500).send({ status: false, message: error.message }) }
+
+}
 
 
 //------------------------------------------------getBooks----------------------------------------------//
@@ -59,7 +60,13 @@ const getBooks = async function (req, res) {
     let obj = {
       isDeleted: false
     }
-    if (userId) { obj.userId = userId }
+    if (userId) {
+      obj.userId = userId
+      let checkUser = await userModel.findById(userId)
+      if (!checkUser) {
+        return res.status(404).send({ status: false, message: "No user exiist" })
+      }
+    }
     if (category) { obj.category = category }
     if (subcategory) { obj.subcategory = subcategory }
 
@@ -100,7 +107,9 @@ const updateBooks = async function (req, res) {
     let data = req.body
     if (Object.keys(data).length == 0) { return res.status(400).send({ status: false, message: "please enter the data in body" }) }
     let { title, excerpt, releasedAt, ISBN } = data
+if(ISBN){
     if (!(validISBN(ISBN))) { return res.status(400).send({ status: false, message: "ISBN is not valid" }) }
+}
     let getBook = await booksModel.findOne({ $or: [{ title: title }, { ISBN: ISBN }] })
     if (getBook) { return res.status(400).send({ status: false, message: "title or ISBN already exist" }) }
 
